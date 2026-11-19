@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\KrsController;
+use App\Http\Controllers\KurikulumMataKuliahController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\DemoAuth;
@@ -48,6 +50,28 @@ Route::middleware(DemoAuth::class)->group(function () {
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard');
+
+    // KRS Mahasiswa
+    Route::get('/krs', [KrsController::class, 'index'])->name('krs.index');
+    Route::get('/krs/pilih-kelas', [KrsController::class, 'pilihKelas'])->name('krs.pilih-kelas');
+
+    // Kurikulum dan mata kuliah program studi
+    Route::prefix('prodi')->group(function () {
+        Route::get('/kurikulum', [KurikulumMataKuliahController::class, 'indexKurikulum'])->name('kurikulum.index');
+        Route::get('/kurikulum/baru', [KurikulumMataKuliahController::class, 'createKurikulum'])->name('kurikulum.create');
+        Route::post('/kurikulum', [KurikulumMataKuliahController::class, 'storeKurikulum'])->name('kurikulum.store');
+        Route::get('/kurikulum/{code}', [KurikulumMataKuliahController::class, 'showKurikulum'])->name('kurikulum.show');
+        Route::get('/kurikulum/{code}/edit', [KurikulumMataKuliahController::class, 'editKurikulum'])->name('kurikulum.edit');
+        Route::put('/kurikulum/{code}', [KurikulumMataKuliahController::class, 'updateKurikulum'])->name('kurikulum.update');
+
+        Route::get('/mata-kuliah', [KurikulumMataKuliahController::class, 'indexMataKuliah'])->name('mata-kuliah.index');
+        Route::get('/mata-kuliah/tambah', [KurikulumMataKuliahController::class, 'createMataKuliah'])->name('mata-kuliah.create');
+        Route::post('/mata-kuliah', [KurikulumMataKuliahController::class, 'storeMataKuliah'])->name('mata-kuliah.store');
+        Route::get('/mata-kuliah/{code}', [KurikulumMataKuliahController::class, 'showMataKuliah'])->name('mata-kuliah.show');
+        Route::get('/mata-kuliah/{code}/edit', [KurikulumMataKuliahController::class, 'editMataKuliah'])->name('mata-kuliah.edit');
+        Route::put('/mata-kuliah/{code}', [KurikulumMataKuliahController::class, 'updateMataKuliah'])->name('mata-kuliah.update');
+        Route::delete('/mata-kuliah/{code}', [KurikulumMataKuliahController::class, 'destroyMataKuliah'])->name('mata-kuliah.destroy');
+    });
 
     // Pergantian role sementara untuk preview desain
     Route::post('/switch-role', [AuthController::class, 'switchRole'])
