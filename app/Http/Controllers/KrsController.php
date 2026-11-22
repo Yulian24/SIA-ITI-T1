@@ -6,84 +6,51 @@ use Illuminate\Http\Request;
 
 class KrsController extends Controller
 {
+    private array $courses = [
+        ['code' => 'IF201', 'name' => 'Pemrograman Web', 'sks' => 3, 'schedule' => 'Senin, 07.30–10.00 · R. 204', 'lecturer' => 'Dr. Rina Kartika, M.Kom.', 'selected' => true],
+        ['code' => 'IF203', 'name' => 'Basis Data', 'sks' => 3, 'schedule' => 'Senin, 13.00–15.30 · Lab. Komputer 2', 'lecturer' => 'Agus Prasetyo, S.T., M.T.', 'selected' => true],
+        ['code' => 'IF209', 'name' => 'Jaringan Komputer', 'sks' => 3, 'schedule' => 'Selasa, 08.00–10.30 · R. 208', 'lecturer' => 'Yusuf Maulana, S.T., M.Kom.', 'selected' => true],
+        ['code' => 'IF205', 'name' => 'Interaksi Manusia dan Komputer', 'sks' => 3, 'schedule' => 'Rabu, 10.20–12.00 · R. 301', 'lecturer' => 'Nur Aini Lubis, S.Kom., M.Sc.', 'selected' => true],
+        ['code' => 'IF207', 'name' => 'Rekayasa Perangkat Lunak', 'sks' => 3, 'schedule' => 'Kamis, 08.00–10.30 · R. 206', 'lecturer' => 'Ir. Bambang Setiawan, M.Kom.', 'selected' => true],
+        ['code' => 'IF211', 'name' => 'Statistika', 'sks' => 3, 'schedule' => 'Sabtu, 08.00–10.00 · R. 103', 'lecturer' => 'Dewi Kurniasari, S.Si., M.Stat.', 'selected' => true],
+        ['code' => 'IF215', 'name' => 'Pemrograman Perangkat Bergerak', 'sks' => 3, 'schedule' => 'Jumat, 13.00–15.30 · R. 305', 'lecturer' => 'Muhamad Ramli, S.Kom., M.Kom.', 'selected' => false],
+    ];
+
     public function index(Request $request)
     {
-        $state = $request->query('state', 'disetujui');
-
-        $allowedStates = [
-            'default',
-            'disetujui',
-            'periode_dibuka',
-            'menunggu_persetujuan',
-            'ditolak',
-            'periode_ditutup',
-            'loading',
-            'semester_antara',
-            'semester_antara_kosong',
-        ];
-
-        if (!in_array($state, $allowedStates, true)) {
-            $state = 'disetujui';
+        $allowed = ['pengisian_krs', 'menunggu_persetujuan', 'ditolak_dosen_pa', 'disetujui'];
+        $state = (string) $request->query('state', 'pengisian_krs');
+        if ($state === 'konfirmasi-ajukan') {
+            $state = 'pengisian_krs';
+        } elseif (! in_array($state, $allowed, true)) {
+            $state = 'pengisian_krs';
         }
 
-        $authUser = session('auth_user', []);
-
-        $student = [
-            'nim' => ($authUser['nim'] ?? null) && $authUser['nim'] !== '-' ? $authUser['nim'] : '312020001',
-            'name' => $authUser['name'] ?? 'Budi Santoso',
-            'program' => $authUser['program'] ?? 'Teknik Informatika (S1)',
-            'angkatan' => '2025',
-            'semester' => '3 · Ganjil 2026/2027',
-            'status' => 'Aktif',
-            'kurikulum' => '2024',
-            'dosen_pa' => 'Dr. Rina Kartika, M.Kom.',
-            'ipk' => '3,45',
-            'sks_lulus' => 42,
-            'batas_sks' => 24,
-            'periode_lalu' => '20252',
-            'ipk_lalu' => '3,45',
-        ];
-
-        $periodes = [
-            '20261' => '20261 · Ganjil 2026/2027',
-            '20252' => '20252 · Genap 2025/2026',
-            '20251' => '20251 · Ganjil 2025/2026',
-        ];
-
-        $selectedPeriode = $request->query('periode', $state === 'semester_antara' || $state === 'semester_antara_kosong' ? '20252' : '20261');
-
-        $courses = [
-            ['code' => 'IF201', 'name' => 'Pemrograman Web', 'schedule' => 'Senin, 07.30–10.00', 'semester' => 3, 'sks' => 3],
-            ['code' => 'IF203', 'name' => 'Basis Data', 'schedule' => 'Senin, 13.00–15.30', 'semester' => 3, 'sks' => 3],
-            ['code' => 'IF205', 'name' => 'Interaksi Manusia dan Komputer', 'schedule' => 'Rabu, 10.30–12.00', 'semester' => 3, 'sks' => 3],
-            ['code' => 'IF207', 'name' => 'Rekayasa Perangkat Lunak', 'schedule' => 'Kamis, 08.00–10.30', 'semester' => 3, 'sks' => 3],
-            ['code' => 'IF209', 'name' => 'Jaringan Komputer', 'schedule' => 'Selasa, 08.00–10.30', 'semester' => 3, 'sks' => 3],
-            ['code' => 'IF211', 'name' => 'Statistika', 'schedule' => 'Sabtu, 08.00–10.00', 'semester' => 3, 'sks' => 3],
-        ];
-
-        if ($state === 'ditolak') {
-            $courses[] = ['code' => 'IF213', 'name' => 'Pemrograman Perangkat Bergerak', 'schedule' => 'Selasa, 13.00–15.30', 'semester' => 3, 'sks' => 3];
+        $courses = $this->courses;
+        if ($state === 'ditolak_dosen_pa') {
+            foreach ($courses as &$course) {
+                if ($course['code'] === 'IF215') {
+                    $course['selected'] = true;
+                }
+            }
+            unset($course);
+        } elseif ($state === 'disetujui') {
+            foreach ($courses as &$course) {
+                if ($course['code'] === 'IF215') {
+                    $course['selected'] = false;
+                }
+            }
+            unset($course);
         }
 
-        if ($state === 'semester_antara') {
-            $courses = [
-                ['code' => 'IF102', 'name' => 'Kalkulus II', 'schedule' => 'Senin, 08.00–10.30', 'semester' => 2, 'sks' => 3],
-                ['code' => 'IF104', 'name' => 'Algoritma dan Struktur Data', 'schedule' => 'Selasa, 08.00–10.30', 'semester' => 2, 'sks' => 3],
-                ['code' => 'IF106', 'name' => 'Arsitektur Komputer', 'schedule' => 'Selasa, 13.00–15.30', 'semester' => 2, 'sks' => 3],
-                ['code' => 'IF108', 'name' => 'Pemrograman Berorientasi Objek', 'schedule' => 'Rabu, 08.00–10.30', 'semester' => 2, 'sks' => 3],
-                ['code' => 'IF110', 'name' => 'Sistem Digital', 'schedule' => 'Kamis, 08.00–10.30', 'semester' => 2, 'sks' => 3],
-                ['code' => 'IF112', 'name' => 'Aljabar Linear', 'schedule' => 'Kamis, 13.00–15.30', 'semester' => 2, 'sks' => 3],
-                ['code' => 'IF114', 'name' => 'Bahasa Inggris', 'schedule' => 'Jumat, 08.00–09.40', 'semester' => 2, 'sks' => 2],
-            ];
-        }
-
-        return view('krs.index', compact('state', 'student', 'periodes', 'selectedPeriode', 'courses'));
+        return view('krs.index', [
+            'state' => $state,
+            'courses' => $courses,
+        ]);
     }
 
     public function pilihKelas(Request $request)
     {
-        $state = $request->query('state', 'default');
-
         $allowedStates = [
             'default',
             'konfirmasi_pengajuan',
@@ -94,50 +61,61 @@ class KrsController extends Controller
             'loading',
             'semester_antara',
         ];
-
-        if (!in_array($state, $allowedStates, true)) {
-            $state = 'default';
-        }
-
-        $authUser = session('auth_user', []);
-
-        $meta = [
-            'periode' => $state === 'semester_antara' ? 'Semester antara 2026' : '20261 · Ganjil 2026/2027',
-            'dosen_pa' => 'Dr. Rina Kartika, M.Kom.',
-            'batas_waktu' => $state === 'semester_antara' ? '7 Jul 2026, 23.59 WIB' : '21 Agu 2026, 23.59 WIB',
-            'batas_sks' => 24,
-            'periode_lalu' => '20252',
-            'ipk_lalu' => '3,45',
-            'nim' => ($authUser['nim'] ?? null) && $authUser['nim'] !== '-' ? $authUser['nim'] : '312020001',
-            'name' => $authUser['name'] ?? 'Budi Santoso',
-        ];
+        $requestedState = $request->query('state', 'default');
+        $state = is_string($requestedState) && in_array($requestedState, $allowedStates, true)
+            ? $requestedState
+            : 'default';
 
         $offerings = [
-            ['code' => 'IF201', 'name' => 'Pemrograman Web', 'schedule' => 'Senin, 07.30–10.00', 'sks' => 3, 'semester' => 3, 'status' => 'in_draft', 'note' => null],
-            ['code' => 'IF203', 'name' => 'Basis Data', 'schedule' => 'Senin, 13.00–15.30', 'sks' => 3, 'semester' => 3, 'status' => 'in_draft', 'note' => null],
-            ['code' => 'IF205', 'name' => 'Interaksi Manusia dan Komputer', 'schedule' => 'Rabu, 10.30–12.00', 'sks' => 3, 'semester' => 3, 'status' => 'in_draft', 'note' => null],
-            ['code' => 'IF207', 'name' => 'Rekayasa Perangkat Lunak', 'schedule' => 'Kamis, 08.00–10.30', 'sks' => 3, 'semester' => 3, 'status' => 'in_draft', 'note' => null],
-            ['code' => 'IF209', 'name' => 'Jaringan Komputer', 'schedule' => 'Selasa, 08.00–10.30', 'sks' => 3, 'semester' => 3, 'status' => 'in_draft', 'note' => null],
-            ['code' => 'IF211', 'name' => 'Statistika', 'schedule' => 'Sabtu, 08.00–10.00', 'sks' => 3, 'semester' => 3, 'status' => 'in_draft', 'note' => null],
-            ['code' => 'IF212', 'name' => 'Sistem Operasi', 'schedule' => 'Jumat, 08.00–10.30', 'sks' => 3, 'semester' => 3, 'status' => 'full', 'note' => 'Kelas penuh (40/40)'],
-            ['code' => 'IF215', 'name' => 'Pemrograman Perangkat Bergerak', 'schedule' => 'Selasa, 13.00–15.30', 'sks' => 3, 'semester' => 3, 'status' => 'available', 'note' => null],
-            ['code' => 'IF217', 'name' => 'Etika Profesi', 'schedule' => 'Kamis, 13.00–15.00', 'sks' => 2, 'semester' => 3, 'status' => 'available', 'note' => null],
-            ['code' => 'IF220', 'name' => 'Kecerdasan Buatan', 'schedule' => 'Rabu, 07.30–10.00', 'sks' => 3, 'semester' => 4, 'status' => 'locked', 'note' => 'Prasyarat belum terpenuhi: IF204 Matematika Diskrit'],
+            ['code' => 'IF201', 'name' => 'Pemrograman Web', 'schedule' => 'Senin, 07.30–10.00 · R. 204', 'sks' => 3, 'semester' => 4, 'status' => 'in_draft'],
+            ['code' => 'IF203', 'name' => 'Basis Data', 'schedule' => 'Senin, 13.00–15.30 · Lab. Komputer 2', 'sks' => 3, 'semester' => 4, 'status' => 'in_draft'],
+            ['code' => 'IF209', 'name' => 'Jaringan Komputer', 'schedule' => 'Selasa, 08.00–10.30 · R. 208', 'sks' => 3, 'semester' => 4, 'status' => 'available'],
+            ['code' => 'IF205', 'name' => 'Interaksi Manusia dan Komputer', 'schedule' => 'Rabu, 10.20–12.00 · R. 301', 'sks' => 3, 'semester' => 4, 'status' => 'available'],
+            ['code' => 'IF207', 'name' => 'Rekayasa Perangkat Lunak', 'schedule' => 'Kamis, 08.00–10.30 · R. 206', 'sks' => 3, 'semester' => 4, 'status' => 'available'],
+            ['code' => 'IF211', 'name' => 'Statistika', 'schedule' => 'Sabtu, 08.00–10.00 · R. 103', 'sks' => 3, 'semester' => 4, 'status' => 'full'],
+            ['code' => 'IF307', 'name' => 'Komputasi Awan', 'schedule' => 'Kamis, 08.00–10.30 · R. 210', 'sks' => 4, 'semester' => 6, 'status' => 'locked', 'note' => 'Prasyarat IF207 belum terpenuhi.'],
         ];
 
-        if ($state === 'duplikasi_ditolak') {
-            array_splice($offerings, 6, 0, [
-                ['code' => 'IF201-B', 'name' => 'Pemrograman Web', 'schedule' => 'Rabu, 13.00–15.30', 'sks' => 3, 'semester' => 3, 'status' => 'available', 'note' => null],
-            ]);
-        }
-
         if ($state === 'semester_antara') {
-            $offerings = [
-                ['code' => 'IF102', 'name' => 'Kalkulus II', 'schedule' => 'Senin, 08.00–10.30', 'sks' => 3, 'semester' => 2, 'status' => 'in_draft', 'note' => null],
-                ['code' => 'IF104', 'name' => 'Algoritma dan Struktur Data', 'schedule' => 'Selasa, 08.00–10.30', 'sks' => 3, 'semester' => 2, 'status' => 'available', 'note' => null],
-            ];
+            $offerings = array_slice($offerings, 0, 2);
+            foreach ($offerings as $index => &$offering) {
+                $offering['status'] = $index === 0 ? 'in_draft' : 'available';
+            }
+            unset($offering);
         }
 
-        return view('krs.pilih-kelas', compact('state', 'meta', 'offerings'));
+        if ($state === 'validasi_gagal') {
+            foreach ($offerings as &$offering) {
+                if ($offering['code'] === 'IF307') {
+                    $offering['status'] = 'in_draft';
+                }
+            }
+            unset($offering);
+        }
+
+        return view('krs.pilih-kelas', [
+            'state' => $state,
+            'offerings' => $offerings,
+            'meta' => [
+                'periode' => $state === 'semester_antara' ? 'semester-antara-2026' : '20261',
+                'dosen_pa' => 'Dr. Rina Kartika, M.Kom.',
+                'batas_waktu' => '21 Agu 2026, 23.59 WIB',
+                'batas_sks' => $state === 'semester_antara' ? 9 : 24,
+                'periode_lalu' => '20252',
+                'ipk_lalu' => '3,20',
+            ],
+        ]);
+    }
+
+    public function submit(Request $request)
+    {
+        $nextState = $request->input('action') === 'approve_sim' ? 'disetujui' : 'menunggu_persetujuan';
+
+        if ($nextState === 'disetujui') {
+            return redirect()->route('dashboard', ['state' => 'default']);
+        }
+
+        return redirect()->route('krs.index', ['state' => 'menunggu_persetujuan'])
+            ->with('krs_notice', 'KRS periode 20261 berhasil diajukan ke Dosen PA (Dr. Rina Kartika, M.Kom.).');
     }
 }

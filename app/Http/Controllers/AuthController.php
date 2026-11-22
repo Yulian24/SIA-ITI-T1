@@ -32,7 +32,7 @@ class AuthController extends Controller
         $password = $data['password'];
 
         // Kunci berdasarkan username dan alamat IP
-        $key = 'login:' . strtolower($identifier) . '|' . $request->ip();
+        $key = 'login:'.strtolower($identifier).'|'.$request->ip();
 
         // Periksa apakah akun sedang dikunci
         if (RateLimiter::tooManyAttempts($key, 5)) {
@@ -111,7 +111,17 @@ class AuthController extends Controller
 
         // Simpan data pengguna
         session([
-            'auth_user' => $user
+            'auth_user' => $user,
+        ]);
+
+        $roleMap = [
+            'Mahasiswa' => 'mahasiswa',
+            'Administrator' => 'admin',
+            'Admin Akademik' => 'baak',
+        ];
+        session([
+            'sia_role' => $roleMap[$user['role']] ?? 'mahasiswa',
+            'sia_roles' => ['dosen', 'dosen_pa', 'kaprodi'],
         ]);
 
         return redirect()->route('dashboard')
@@ -126,7 +136,7 @@ class AuthController extends Controller
     public function sendResetLink(Request $request)
     {
         $request->validate([
-            'email' => ['required', 'email']
+            'email' => ['required', 'email'],
         ]);
 
         return back()->with(
@@ -138,7 +148,7 @@ class AuthController extends Controller
     public function showReset(Request $request)
     {
         return view('auth.reset-password', [
-            'email' => $request->query('email', '')
+            'email' => $request->query('email', ''),
         ]);
     }
 
@@ -170,6 +180,19 @@ class AuthController extends Controller
 
         session(['auth_user' => $user]);
 
+        $roleMap = [
+            'Mahasiswa' => 'mahasiswa',
+            'Admin Akademik' => 'baak',
+            'Dosen' => 'dosen',
+            'Dosen PA' => 'dosen_pa',
+            'Kaprodi' => 'kaprodi',
+        ];
+
+        session([
+            'sia_role' => $roleMap[$validated['role']] ?? 'mahasiswa',
+            'sia_roles' => ['dosen', 'dosen_pa', 'kaprodi'],
+        ]);
+
         return redirect()->route('dashboard')
             ->with('success', 'Role berhasil diganti.');
     }
@@ -177,6 +200,7 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         $request->session()->forget('auth_user');
+        $request->session()->forget(['sia_role', 'sia_roles']);
         $request->session()->regenerateToken();
 
         return redirect()->route('login')

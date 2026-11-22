@@ -1,13 +1,16 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\BerandaController;
+use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\KrsController;
 use App\Http\Controllers\KurikulumMataKuliahController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\NilaiController;
+use App\Http\Controllers\PresensiController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserController;
 use App\Http\Middleware\DemoAuth;
+use Illuminate\Support\Facades\Route;
 
 // TES SEMENTARA
 Route::get('/tes', function () {
@@ -48,11 +51,18 @@ Route::middleware(DemoAuth::class)->group(function () {
         ->name('logout');
 
     // Dashboard
-    Route::get('/dashboard', [DashboardController::class, 'index'])
-        ->name('dashboard');
+    Route::get('/dashboard', [BerandaController::class, 'index'])->name('dashboard');
+
+    Route::get('/jadwal', [JadwalController::class, 'index'])->name('jadwal.index');
+
+    Route::get('/presensi', [PresensiController::class, 'index'])->name('presensi.index');
+    Route::get('/presensi/{code}', [PresensiController::class, 'show'])->name('presensi.show');
+
+    Route::get('/nilai', [NilaiController::class, 'index'])->name('nilai.index');
 
     // KRS Mahasiswa
     Route::get('/krs', [KrsController::class, 'index'])->name('krs.index');
+    Route::post('/krs/ajukan', [KrsController::class, 'submit'])->name('krs.submit');
     Route::get('/krs/pilih-kelas', [KrsController::class, 'pilihKelas'])->name('krs.pilih-kelas');
 
     // Kurikulum dan mata kuliah program studi
@@ -102,7 +112,7 @@ Route::middleware(DemoAuth::class)->group(function () {
             'baak / admin akademik',
         ];
 
-        if (!in_array($role, $allowedRoles, true)) {
+        if (! in_array($role, $allowedRoles, true)) {
             abort(403, 'Anda tidak memiliki hak akses ke halaman ini.');
         }
 
@@ -122,7 +132,7 @@ Route::middleware(DemoAuth::class)->group(function () {
             'admin',
         ];
 
-        if (!in_array($role, $allowedRoles, true)) {
+        if (! in_array($role, $allowedRoles, true)) {
             abort(403, 'Anda tidak memiliki hak akses ke halaman ini.');
         }
 

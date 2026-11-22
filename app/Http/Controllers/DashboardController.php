@@ -36,10 +36,10 @@ class DashboardController extends Controller
             // MAHASISWA
             'mahasiswa' => [
                 ['label' => 'Beranda', 'icon' => 'B', 'route' => 'dashboard'],
-                ['label' => 'KRS', 'icon' => 'K', 'route' => '#'],
-                ['label' => 'Jadwal', 'icon' => 'J', 'route' => '#'],
-                ['label' => 'Presensi', 'icon' => 'P', 'route' => '#'],
-                ['label' => 'Nilai dan KHS', 'icon' => 'N', 'route' => '#'],
+                ['label' => 'KRS', 'icon' => 'K', 'route' => 'krs.index'],
+                ['label' => 'Jadwal', 'icon' => 'J', 'route' => 'jadwal.index'],
+                ['label' => 'Presensi', 'icon' => 'P', 'route' => 'presensi.index'],
+                ['label' => 'Nilai dan KHS', 'icon' => 'N', 'route' => 'nilai.index'],
                 ['label' => 'Materi dan Tugas', 'icon' => 'M', 'route' => '#'],
                 ['label' => 'Profil', 'icon' => 'A', 'route' => 'profile.show'],
             ],

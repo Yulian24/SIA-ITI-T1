@@ -4590,3 +4590,288 @@ body.mhs-modal-open {
         max-height: calc(100vh - 20px);
     }
 }
+
+.sia-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.25rem;
+    padding: 0 1.5rem;
+    background: #0d1b4c;
+    color: #ffffff;
+    font-family: system-ui, -apple-system, sans-serif;
+    height: 64px;
+    min-height: 64px;
+}
+
+.sia-topbar-brand {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #ffffff;
+    line-height: 1.2;
+    text-decoration: none;
+}
+
+.sia-topbar-brand-title {
+    font-size: 0.9375rem;
+    font-weight: 700;
+}
+
+.sia-topbar-brand-subtitle {
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 0.6875rem;
+    font-weight: 400;
+}
+
+.sia-topbar-tools {
+    display: inline-flex;
+    align-items: center;
+    gap: 1.25rem;
+    flex-shrink: 0;
+}
+
+.sia-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    text-decoration: none;
+    color: #ffffff;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.sia-brand-box {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.22rem 0.48rem;
+    border: 1.5px solid rgba(255, 255, 255, 0.45);
+    border-radius: 0.45rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.sia-brand-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.sia-topbar-right {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-shrink: 0;
+}
+
+.sia-topbar-right.sia-header-actions {
+    gap: 0.65rem;
+}
+
+.sia-period-box {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    background: #ffffff;
+    color: #0f172a;
+    padding: 0.28rem 0.65rem;
+    border-radius: 0.5rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.sia-period-active {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: #dcfce7;
+    color: #15803d;
+    padding: 0.1rem 0.45rem;
+    border-radius: 9999px;
+    font-size: 0.7rem;
+    font-weight: 700;
+}
+
+.sia-icon-btn {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.5rem;
+    border: none;
+    background: transparent;
+    color: #ffffff;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sia-icon-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.sia-launcher-btn.is-active {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.sia-period-picker {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    background: #ffffff;
+    color: #0f172a;
+    border-radius: 0.55rem;
+    padding: 0.34rem 0.65rem;
+    font-size: 0.8125rem;
+    line-height: 1;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.14);
+    white-space: nowrap;
+}
+
+.sia-period-picker .sia-period-icon {
+    color: #64748b;
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.sia-period-picker .sia-period-label {
+    display: inline;
+    color: #64748b;
+    font-weight: 500;
+    font-size: inherit;
+    letter-spacing: normal;
+}
+
+.sia-period-picker .sia-period-code {
+    color: #0f172a;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+}
+
+.sia-period-picker .sia-period-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: #e6f4ea;
+    color: #1e7e34;
+    padding: 0.22rem 0.5rem;
+    border-radius: 0.4rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+}
+
+.sia-period-picker .sia-period-caret {
+    color: #475569;
+    display: inline-flex;
+    align-items: center;
+    margin-left: 0.1rem;
+}
+
+.sia-period-picker .sia-period-select {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+@media (max-width: 700px) {
+    .sia-topbar {
+        gap: 0.75rem;
+        padding: 0 1rem;
+    }
+
+    .sia-topbar-tools {
+        gap: 0.65rem;
+    }
+
+    .sia-topbar-right {
+        gap: 0.45rem;
+    }
+
+    .sia-period-box {
+        gap: 0.25rem;
+        padding: 0.28rem 0.4rem;
+        font-size: 0.68rem;
+    }
+
+    .sia-period-picker {
+        gap: 0.3rem;
+        padding: 0.34rem 0.4rem;
+        font-size: 0.68rem;
+    }
+
+    .sia-period-picker .sia-period-icon svg {
+        width: 12px;
+        height: 12px;
+    }
+
+    .sia-period-picker .sia-period-status {
+        padding: 0.18rem 0.3rem;
+        font-size: 0.65rem;
+    }
+
+    .sia-icon-btn {
+        width: 1.8rem;
+        height: 1.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .sia-topbar {
+        gap: 0.4rem;
+        padding: 0 0.55rem;
+    }
+
+    .sia-topbar-tools {
+        gap: 0.25rem;
+    }
+
+    .sia-topbar-right {
+        gap: 0.15rem;
+    }
+
+    .sia-topbar-brand-subtitle {
+        display: none;
+    }
+
+    .sia-topbar-brand-title {
+        font-size: 0.8rem;
+    }
+
+    .sia-period-picker {
+        gap: 0.25rem;
+        padding: 0.34rem 0.35rem;
+        font-size: 0.65rem;
+    }
+
+    .sia-period-picker .sia-period-label {
+        display: none;
+    }
+
+    .sia-period-picker .sia-period-icon svg {
+        width: 12px;
+        height: 12px;
+    }
+
+    .sia-period-picker .sia-period-status {
+        padding: 0.18rem 0.25rem;
+        font-size: 0.6rem;
+    }
+
+    .sia-period-picker .sia-period-caret svg {
+        width: 11px;
+        height: 11px;
+    }
+
+    .sia-icon-btn {
+        width: 1.65rem;
+        height: 1.65rem;
+    }
+}
